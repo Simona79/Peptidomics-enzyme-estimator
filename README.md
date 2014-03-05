@@ -56,11 +56,15 @@ Use the help() function on peptide for further documentation
     function import_peptides_and_preprocess()
     
 Takes the following arguments
+
 -peptideCsvFileObject = a file object of the peptide CSV file
+
 -fastaFileObject = a file object of the fasta library
+
 -validEnzymeList = a list of valid enzymes, these enzymes must have regex entries in the '_el' library
 
 Returns
+
 -peptideList = A list of peptide objects
 
     function extract_data_from_processed_peptides()
