@@ -66,12 +66,17 @@ Returns
     function extract_data_from_processed_peptides()
 
 Accepts the following arguments
+
 -peptideList = A list of peptide objects
+
 -validEnzymeList = a list of valid enzymes with regex patterns, case sensitive. See below for enzymes.
+
 -method = A string for the grouping method, use "sampleId" to group by experiment and "accession" to group by protein.
+
 -result = A string specifying the output, use "dictionary" for raw data and "list" for a csv object precursor shown inte example
 
 returns:
+
 -A list or dict depending on the result method, default value is dictionary.
     
    
@@ -83,7 +88,7 @@ check the "_el" dictionary in EnzymeCutQuantifier.py for valid enzymes
 
     
 A note on the meaning of N-side and C-side clevages
-___________________________________________________
+---------------------------------------------------
 
 This program uses the most common defintion of N and C side cleavages and this section
 was written to address any misconceptions that can arise from working with peptides.
