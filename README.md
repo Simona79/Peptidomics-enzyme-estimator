@@ -3,10 +3,30 @@ PeptidomicsEnzymeEstimator
 
 Dependencies:
 -------------
-Python 2.7
-Biopython
-    
-Quck tutorial: example code below
+  * Python 2.7
+  * Biopython
+
+  
+  
+What does this program do?
+--------------------------
+
+This program helps extract rough estimates of enzyme activity by mapping peptide feature intensity
+to enzyme identity by evaluating the termini of the peptides against enzymatic systems. This program
+does not propose to predict enzymatic activity nor can it be truly quantitative even if passed quantitative
+data since a cut can rarely be traced to a specific enzyme. Still, the estimation provided by this mapping 
+can provide insights into the dominant enzymatic systems and can be used to help identify unexpected
+or uncharacterised behaviour.
+
+The output includes intensities mapped to enzyme identities from the provided list, it also includes "orphan
+specificities" These, unlike enzymatic mapping which is may overlap, are only extracted if no defined
+enzymatic system can account for a peptides terminus. In this case, both amino acids accounting for the site
+of cleavage at the terminus of the peptide will have 50% of the peptide's intensity mapped to a "c-side" and
+an "n-side" amino acid cleavage category. Thus, a peptide arising from a fully characterized set of proteases
+will have no mapped intensity in this category.
+
+  
+Quick tutorial: example code below
 ---------------------------------
 
     #first, import the module
@@ -14,10 +34,11 @@ Quck tutorial: example code below
     
     #next, open relevant library files:
     fastaFile = open("degradomeLibrary.fasta", "r")
-    csvTestFile = open("test_15mothers_degradome.csv", 'r')
+    csvTestFile = open("15_samples_milk_degradome.csv", 'r')
     inputEnzymeList = ["Trypsin", "Elastase"]
     
-    #load and preprocess peptides, then retrieve the results as a dictionary or a two tier list (useful for making CSVs)
+    #load and preprocess peptides, then retrieve the results as a dictionary or a two tier list 
+    #(the list result method is useful for making CSVs)
     peptideList = pee.import_peptides_and_preprocess(csvTestFile, fastaFile, inputEnzymeList)
     resultCSV = pee.extract_data_from_processed_peptides(peptideList, inputEnzymeList, result = "list")
     
@@ -32,14 +53,13 @@ Peptide file format
 --------------------
 
 CSV file, top line must have columns matching
-"sequence" - Single letter AA sequences of the peptides
-"intensity" - An integer of float representing MS response
-"protein_id" - This must be the accession number used in the uniprot file
-"sample_id" - This string defines the experiment or chromatographic run and is used
-              for grouping
+
+  * "sequence" - Single letter AA sequences of the peptides
+  * "intensity" - An integer of float representing MS response
+  * "protein_id" - This must be the accession number used in the uniprot file
+  * "sample_id" - This string defines the experiment or chromatographic run and is used for grouping
               
-lines prior to this may be empty (having less than 5 characters) or may be marked with 
-a '#' to indicate the start of a comment
+lines prior to the header may be empty or may be marked with a '#' to indicate a comment
 
     
 
@@ -57,31 +77,26 @@ Use the help() function on peptide for further documentation
     
 Takes the following arguments
 
--peptideCsvFileObject = a file object of the peptide CSV file
-
--fastaFileObject = a file object of the fasta library
-
--validEnzymeList = a list of valid enzymes, these enzymes must have regex entries in the '_el' library
+  * peptideCsvFileObject = a file object of the peptide CSV file
+  * fastaFileObject = a file object of the fasta library
+  * validEnzymeList = a list of valid enzymes, these enzymes must have regex entries in the '_el' library
 
 Returns
 
--peptideList = A list of peptide objects
+  * peptideList = A list of peptide objects
 
     function extract_data_from_processed_peptides()
 
-Accepts the following arguments
+Takes the following arguments
 
--peptideList = A list of peptide objects
-
--validEnzymeList = a list of valid enzymes with regex patterns, case sensitive. See below for enzymes.
-
--method = A string for the grouping method, use "sampleId" to group by experiment and "accession" to group by protein.
-
--result = A string specifying the output, use "dictionary" for raw data and "list" for a csv object precursor shown inte example
+  * peptideList = A list of peptide objects
+  * validEnzymeList = a list of valid enzymes with regex patterns, case sensitive. See below for enzymes.
+  * method = A string for the grouping method, use "sampleId" to group by experiment and "accession" to group by protein.
+  * result = A string specifying the output, use "dictionary" for raw data and "list" for a csv formatted lists
 
 returns:
 
--A list or dict depending on the result method, default value is dictionary.
+  * A list or dict depending on the result method, default value is dictionary.
     
    
 
@@ -91,19 +106,19 @@ check the "_el" dictionary in EnzymeCutQuantifier.py for valid enzymes
     
 
     
-A note on the meaning of N-side and C-side clevages
----------------------------------------------------
+A note on the meaning of N-side and C-side cleavages
+----------------------------------------------------
 
-This program uses the most common defintion of N and C side cleavages and this section
+This program uses the most common definition of N and C side cleavages and this section
 was written to address any misconceptions that can arise from working with peptides.
 
 Convention dictates writing sequences from N to C. While this convention is held
 by this program, a confusing wrinkle can be illustrated using the sequence below where 
-forward    slashes represent an observed enzymatic cleavage producing the peptide VNLAS:
+forward slashes represent an observed enzymatic cleavage producing the peptide VNLAS:
 
     n...R/VNLAS/W...c
 
-We can say that enzymes are cutting on the C side of arginine or on the N side of Valine.
+We can say that enzymes are cutting on the C side of arginine or on the N side of valine.
 So far, this is intuitive. But, if there is a C-side cut for arginine, this produces
 the n-terminus of the peptide, alternatively an N-side cut on tryptophan will produce
 the c-terminus of the peptide. Keeping this contradiction in mind will assist when 
