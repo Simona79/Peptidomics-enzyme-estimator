@@ -1,6 +1,9 @@
 PeptidomicsEnzymeEstimator
 ==========================
 
+####Online version available:
+Currently a Beta version is on my [personal page](http://peptidomics.evanaparker.com). Message me for early access.
+
 Dependencies:
 -------------
   * Python 2.7
