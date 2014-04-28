@@ -1,5 +1,8 @@
-PeptidomicsEnzymeEstimator
+PeptidomicsEnzymeEstimator 
 ==========================
+###(aka: Peptidomics Enzyme Tabulator, PEnTab)
+
+
 
 ####Online version available:
 Currently a Beta version is on my [personal page](http://peptidomics.evanaparker.com). Message me for early access.
