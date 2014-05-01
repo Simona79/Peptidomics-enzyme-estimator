@@ -5,7 +5,7 @@ PeptidomicsEnzymeEstimator
 
 
 ####Online version available:
-Currently a Beta version is on my [personal page](http://peptidomics.evanaparker.com). Message me for early access.
+Currently a Beta version is on my [personal page](http://peptidomics.evanaparker.com). Message me for access.
 
 Dependencies:
 -------------
@@ -127,5 +127,12 @@ forward slashes represent an observed enzymatic cleavage producing the peptide V
 We can say that enzymes are cutting on the C side of arginine or on the N side of valine.
 So far, this is intuitive. But, if there is a C-side cut for arginine, this produces
 the n-terminus of the peptide, alternatively an N-side cut on tryptophan will produce
-the c-terminus of the peptide. Keeping this contradiction in mind will assist when 
-interpreting the extraction of the "nSideOrphans" and "cSideOrphans" data.
+the c-terminus of the peptide. Intensities will always be assigned using the specificity
+of the cleavage, not using traditional n and c side assignments of a peptide. Keeping this
+in mind will help interpreting the extraction of the "nSideOrphans" and "cSideOrphans" data. 
+
+As an example, say the peptide above (VNLAS) has an intensity of 100 and it is analyzed
+with no explicit enzymes. The cSideOrphans dictionary would contain {"R":100, "S":100}
+and the nSideOrphans dictionary would contain {"V":100, "W":100}. If the same peptide
+as analyzed using only trypsin then the analysis would return an enzyme dictionary with
+{"trypsin":100}, cSideOrphans == {"S":100}, nSideOrphans == {"W":100}.
