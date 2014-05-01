@@ -134,5 +134,5 @@ in mind will help interpreting the extraction of the "nSideOrphans" and "cSideOr
 As an example, say the peptide above (VNLAS) has an intensity of 100 and it is analyzed
 with no explicit enzymes. The cSideOrphans dictionary would contain {"R":100, "S":100}
 and the nSideOrphans dictionary would contain {"V":100, "W":100}. If the same peptide
-as analyzed using only trypsin then the analysis would return an enzyme dictionary with
-{"trypsin":100}, cSideOrphans == {"S":100}, nSideOrphans == {"W":100}.
+was analyzed using only trypsin then the analysis would return an enzyme dictionary with
+{"trypsin":100}, cSideOrphans == {"S":100}, and nSideOrphans == {"W":100}.
