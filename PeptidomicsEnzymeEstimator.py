@@ -4,20 +4,25 @@ http://creativecommons.org/licenses/by/3.0/
 """
 
 from Bio import SeqIO
+from copy import copy
 import re
 
 
 _el = { "Arg-C proteinase":                r'([A-Z_]R[A-Z][A-Z_])',
         "Asp-N endopeptidase":             r'([A-Z_][A-Z]D[A-Z_])',
         "BNPS-Skatole":                    r'([A-Z_]W[A-Z][A-Z_])',
-        "Chymotrypsin low-specificity":    r'([A-Z_][LYF][A-OQ-Z][A-Z_]|[A-Z_]W[A-LNOQ-Z][A-Z_]|[A-Z_]M[A-OQ-W][A-Z_]|[A-Z_]H[B-OQ-W][A-Z_])',
-        "Chymotrypsin high-specificity":   r'([A-Z_][YF][A-OQ-Z][A-Z_]|[A-Z_]W[A-LNOQ-Z][A-Z_])',
+        "Chymotrypsin specific":    r'([A-Z_][LYF][A-OQ-Z][A-Z_]|[A-Z_]W[A-LNOQ-Z][A-Z_]|[A-Z_]M[A-OQ-W][A-Z_]|[A-Z_]H[B-OQ-W][A-Z_])',
+        "Chymotrypsin low-spec.":   r'([A-Z_][YF][A-OQ-Z][A-Z_]|[A-Z_]W[A-LNOQ-Z][A-Z_])',
         "Pepsin":                          r'([A-Z_][FWYL][A-Z][A-Z_]|[A-Z_][A-Z][FWYL][A-Z_])',
         "Plasmin":                         r'([A-Z_][KR][A-Z][A-Z_])',
         "Cathepsin D":                     r'([A-Z_][AVLIPMFW][AVLIPMF][A-Z_])',
+        "Cathepsin B":                     r'([A-Z_][GAMQT][FGIVL][A-Z_])',
         "Thrombin":                        r'([A-Z_]RG[A-Z_]|GR[A-Z][A-Z_])',
-        "Elastase":                        r'([A-Z_][AVLIGR][GPALF][A-Z_])',
-        "Trypsin":                         r'([A-Z_][KR][A-OQ-Z][A-Z_])'}
+        "Elastase *(old)":                 r'([A-Z_][AVLIGR][GPALF][A-Z_])',
+        "Elastase":                        r'([A-Z_][VA][A-Z][A-Z_])',
+        "Trypsin":                         r'([A-Z_][KR][A-OQ-Z][A-Z_])',
+        "Thrombin-OSP":                    r'(LRSK)',
+        "_No enzyme":                      r'(__\+__)'}
         
 EnzymeList = {enz: re.compile(_el[enz]) for enz in _el}
 enzymeListNC = {enz: {"n":re.compile(r'\A'+_el[enz]), "c":re.compile(_el[enz]+r'\Z')} for enz in _el}
@@ -131,6 +136,7 @@ def import_peptides_and_preprocess(peptideCsvFileObject, fastaFileObject, validE
     peptideList = []
     
     headerDict = {"sequence":False, "intensity":False, "protein_id":False, "sample_id":False, "rt":False}
+    secondaryHeaderDict = {"protein code": "protein_id", "name":"sequence", "file":"sample_id"}
     fileAnalysisList = {}
     for line in peptideCsvFileObject:
         #parse header indicies
@@ -140,6 +146,8 @@ def import_peptides_and_preprocess(peptideCsvFileObject, fastaFileObject, validE
             for i in range(len(splitLine)):
                 if splitLine[i] in headerDict:
                     headerDict[splitLine[i]] = i
+                elif splitLine[i] in secondaryHeaderDict:
+                    headerDict[secondaryHeaderDict[splitLine[i]]] = i
             if (not headerDict["intensity"] and not headerDict["sequence"]
                     and not headerDict["protein_info"] and not headerDict["sample_id"]):
                 raise ValueError("Incorrect file format; missing one or more columns")
@@ -175,6 +183,9 @@ def extract_data_from_processed_peptides(peptideList, validEnzymeList, method="s
     """
     This function takes a format compliant CSV file object, a fasta file object
     and an enzyme regex dictionary containing n side and c side varriations
+
+    method = "sampleId"  extracts by sample id
+    method = "accession" extracts by protein
     """
     if len(validEnzymeList) > 0:
         enzymeDict = {enzyme:enzymeListNC[enzyme] for enzyme in validEnzymeList if enzyme in enzymeListNC}
@@ -200,14 +211,12 @@ def extract_data_from_processed_peptides(peptideList, validEnzymeList, method="s
         if len(peptide.nMatches) < 1:
             if peptide.contextSequence[1] != '_':
                 outDict[attribute]["nSideOrphans"][peptide.contextSequence[2]] += 0.5*peptide.intensity
-            if peptide.contextSequence[-2] != '_':
-                outDict[attribute]["nSideOrphans"][peptide.contextSequence[-2]] += 0.5*peptide.intensity
+                outDict[attribute]["cSideOrphans"][peptide.contextSequence[1]] += 0.5*peptide.intensity
         
         if len(peptide.cMatches) < 1:
             if peptide.contextSequence[-2] != '_':
                 outDict[attribute]["cSideOrphans"][peptide.contextSequence[-3]] += 0.5*peptide.intensity
-            if peptide.contextSequence[1] != '_':
-                outDict[attribute]["cSideOrphans"][peptide.contextSequence[1]] += 0.5*peptide.intensity
+                outDict[attribute]["nSideOrphans"][peptide.contextSequence[-2]] += 0.5*peptide.intensity
             
     if result == "dictionary":
         return outDict
@@ -215,16 +224,29 @@ def extract_data_from_processed_peptides(peptideList, validEnzymeList, method="s
     validAttributes = [attr for attr in outDict]
     validEnzymes = [enz for enz in enzymeDict]
     
-    firstColumn = [""] + validEnzymes + [aa+"-c-side" for aa in aaList] + [aa+"-n-side" for aa in aaList]
+    enzList = copy(validEnzymes)
+    enzList.sort()
+    cola = [""] + enzList
+    colb = [aa+"-c-side" for aa in aaList]
+    colb.sort()
+    colc = [aa+"-n-side" for aa in aaList]
+    colc.sort
+    firstColumn = cola + colb + colc
     columnList = [firstColumn]
     for attr in validAttributes:
         enzResponses = outDict[attr]["enzymeResponseDict"]
+        enzKeys = enzResponses.keys()
+        enzKeys.sort()
         cSide = outDict[attr]["cSideOrphans"]
+        cKeys = cSide.keys()
+        cKeys.sort()
         nSide = outDict[attr]["nSideOrphans"]
+        nKeys = nSide.keys()
+        nKeys.sort()
         
-        nextColumn = [attr] + [enzResponses[enz] for enz in enzResponses]
-        nextColumn += [cSide[enz] for enz in cSide]
-        nextColumn += [nSide[enz] for enz in nSide]
+        nextColumn = [attr] + [enzResponses[enz] for enz in enzKeys]
+        nextColumn += [cSide[enz] for enz in cKeys]
+        nextColumn += [nSide[enz] for enz in nKeys]
         columnList.append(nextColumn)
     
     newList = zip(*columnList)
@@ -269,8 +291,8 @@ def extract_data_from_processed_peptides(peptideList, validEnzymeList, method="s
 if __name__ == "__main__":
     #from EnzymeCutQuantifier import extract_data_from_processed_peptides, import_peptides_and_preprocess
     
-    fastaFile = open("degradomeLibrary.fasta", "r")
-    csvTestFile = open("test_15mothers_degradome.csv", 'r')
+    fastaFile = open("degradomeLibrary.fasta", "rU")
+    csvTestFile = open("test_15mothers_degradome.csv", "rU")
     inputEnzymeList = ["Trypsin", "Elastase"]
     peptideList = import_peptides_and_preprocess(csvTestFile, fastaFile, inputEnzymeList)
     resultCSV = extract_data_from_processed_peptides(peptideList, inputEnzymeList, result = "list")
