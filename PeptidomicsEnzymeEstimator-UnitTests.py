@@ -64,27 +64,23 @@ if __name__ == "__main__":
             
         def test_Chymotrypsin_low_specificity(self):
             #c side 
-            self.assertIsNotNone(enzymeListNC["Chymotrypsin low-specificity"]["c"].search("AAAAAALAA"))
-            self.assertIsNotNone(enzymeListNC["Chymotrypsin low-specificity"]["c"].search("AAAAAALA_"))
-            self.assertIsNotNone(enzymeListNC["Chymotrypsin low-specificity"]["c"].search("AAAAAAWA_"))
-            self.assertIsNotNone(enzymeListNC["Chymotrypsin low-specificity"]["c"].search("AAAAAAHC_"))
-            self.assertIsNone(enzymeListNC["Chymotrypsin low-specificity"]["c"].search("AAAAAAWP_"))
-            self.assertIsNone(enzymeListNC["Chymotrypsin low-specificity"]["c"].search("AAAAAAHA_"))
+            self.assertIsNotNone(enzymeListNC["Chymotrypsin low-spec."]["c"].search("AAAAAYFAA"))
+            self.assertIsNotNone(enzymeListNC["Chymotrypsin low-spec."]["c"].search("AAAAAFWA_"))
+            self.assertIsNotNone(enzymeListNC["Chymotrypsin low-spec."]["c"].search("AAAAAAWA_"))
             #n side
-            self.assertIsNotNone(enzymeListNC["Chymotrypsin low-specificity"]["n"].search("AFAAAANAA"))
-            self.assertIsNotNone(enzymeListNC["Chymotrypsin low-specificity"]["n"].search("_MAAAALAA"))
-            self.assertIsNone(enzymeListNC["Chymotrypsin low-specificity"]["n"].search("_MPAAALAA"))
+            self.assertIsNotNone(enzymeListNC["Chymotrypsin low-spec."]["n"].search("AFAAAANAA"))
+            self.assertIsNone(enzymeListNC["Chymotrypsin low-spec."]["n"].search("_MPAAALAA"))
         
         def test_Chymotrypsin_high_specificity(self):
             #c side 
-            self.assertIsNotNone(enzymeListNC["Chymotrypsin high-specificity"]["c"].search("AAAAAAYAA"))
-            self.assertIsNotNone(enzymeListNC["Chymotrypsin high-specificity"]["c"].search("AAAAAAFA_"))
-            self.assertIsNotNone(enzymeListNC["Chymotrypsin high-specificity"]["c"].search("AAAAAAWA_"))
-            self.assertIsNone(enzymeListNC["Chymotrypsin high-specificity"]["c"].search("AAAAAAWMA"))
+            self.assertIsNotNone(enzymeListNC["Chymotrypsin specific"]["c"].search("AAAAAAYAA"))
+            self.assertIsNotNone(enzymeListNC["Chymotrypsin specific"]["c"].search("AAAAAAFA_"))
+            self.assertIsNotNone(enzymeListNC["Chymotrypsin specific"]["c"].search("AAAAAAWA_"))
+            self.assertIsNone(enzymeListNC["Chymotrypsin specific"]["c"].search("AAAAAAWMA"))
             #n side
-            self.assertIsNotNone(enzymeListNC["Chymotrypsin high-specificity"]["n"].search("AYAAAAAMA"))
-            self.assertIsNotNone(enzymeListNC["Chymotrypsin high-specificity"]["n"].search("AWAAAAWMA"))
-            self.assertIsNone(enzymeListNC["Chymotrypsin high-specificity"]["n"].search("__WMAAAWMA"))
+            self.assertIsNotNone(enzymeListNC["Chymotrypsin specific"]["n"].search("AYAAAAAMA"))
+            self.assertIsNotNone(enzymeListNC["Chymotrypsin specific"]["n"].search("AWAAAAWMA"))
+            self.assertIsNone(enzymeListNC["Chymotrypsin specific"]["n"].search("__WMAAAWMA"))
             
         def test_Pepsin(self):
             #c side 
@@ -118,12 +114,12 @@ if __name__ == "__main__":
         
         def test_Elastase(self):
             #c side 
-            self.assertIsNotNone(enzymeListNC["Elastase"]["c"].search("AAAAAARPA"))
-            self.assertIsNotNone(enzymeListNC["Elastase"]["c"].search("AAAAAAVA_"))
-            self.assertIsNone(enzymeListNC["Elastase"]["c"].search("AAAAAANN_"))
+            self.assertIsNotNone(enzymeListNC["Elastase *(old)"]["c"].search("AAAAAARPA"))
+            self.assertIsNotNone(enzymeListNC["Elastase *(old)"]["c"].search("AAAAAAVA_"))
+            self.assertIsNone(enzymeListNC["Elastase *(old)"]["c"].search("AAAAAANN_"))
             #n side
-            self.assertIsNotNone(enzymeListNC["Elastase"]["n"].search("ALLAAAAAA"))
-            self.assertIsNotNone(enzymeListNC["Elastase"]["n"].search("_AFAAAAAAA"))
-            self.assertIsNone(enzymeListNC["Elastase"]["n"].search("NNNAAAAAA"))    
+            self.assertIsNotNone(enzymeListNC["Elastase *(old)"]["n"].search("ALLAAAAAA"))
+            self.assertIsNotNone(enzymeListNC["Elastase *(old)"]["n"].search("_AFAAAAAAA"))
+            self.assertIsNone(enzymeListNC["Elastase *(old)"]["n"].search("NNNAAAAAA"))
     
     unittest.main(exit=False)
