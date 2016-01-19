@@ -39,8 +39,8 @@ Quick tutorial: example code below
     import PeptidomicsEnzymeEstimator as pee
     
     #next, open relevant library files:
-    fastaFile = open("degradomeLibrary.fasta", "r")
-    csvTestFile = open("15_samples_milk_degradome.csv", 'r')
+    fastaFile = open("degradomeLibrary.fasta", "rU")
+    csvTestFile = open("15_samples_milk_degradome.csv", "rU")
     inputEnzymeList = ["Trypsin", "Elastase"]
     
     #load and preprocess peptides, then retrieve the results as a dictionary or a two tier list 
